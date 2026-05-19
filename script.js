@@ -13,6 +13,7 @@ let inputMode = "denominator";
 let numeratorInput = "";
 let denominatorInput = "";
 let correctAnswer = null;
+let streak = 0;
 
 // ===== ボタン定義 =====
 const buttons = [
@@ -325,12 +326,14 @@ function checkAnswer() {
 
   // 分母1なのに入力したら不正解
   if (c.den === 1 && denominatorInput.trim() !== "") {
+    streak = 0;
     showToast("分母1は書かないよ！", "error");
     return;
   }
 
   // 分母が必要なのに空欄
   if (c.den !== 1 && denominatorInput.trim() === "") {
+    streak = 0;
     showToast("分母を入力しよう！", "error");
     return;
   }
@@ -348,11 +351,24 @@ function checkAnswer() {
     user.x === c.x &&
     user.y === c.y;
 
-  if (ok) {
-    clearInterval(timerInterval);
-    showToast("正解！よくできました！", "success");
-    newQuestion();
-  } else {
+if (ok) {
+  clearInterval(timerInterval);
+  streak++;
+
+  let msg = "正解！よくできました！";
+
+  if (streak >= 10) {
+    msg = `${streak}連続正解！マジパねえっす！`;
+  } else if (streak >= 5) {
+    msg = `${streak}連続正解！すごい！`;
+  } else if (streak >= 2) {
+    msg = `${streak}連続正解！いいぞ！`;
+  }
+
+  showToast(msg, "success");
+  newQuestion();
+} else {
+    streak = 0;
     showToast("おしい！もう一度！", "error");
   }
 }
@@ -371,7 +387,7 @@ function revealAnswer() {
   updateDisplay();
 
   showToast("時間切れ！答えを確認しよう", "error");
-
+  streak = 0;
   document.querySelector('[data-key="OK"]').textContent = "次へ";
 }
 
