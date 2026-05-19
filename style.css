@@ -1,0 +1,263 @@
+/* ===== 全体リセット ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    "STIX Two Text",
+    "Times New Roman",
+    "Noto Serif JP",
+    serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7fbfc;
+}
+
+/* ===== 数学変数 ===== */
+.var {
+  font-family: "Times New Roman", serif;
+  font-style: italic;
+}
+
+/* ===== 上半分 ===== */
+.top {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+/* 問題 */
+#question {
+  font-size: clamp(24px, 7vw, 52px);
+  line-height: 1.4;
+  margin-bottom: 20px;
+  text-align: center;
+}
+/* ===== 問題文の分数 ===== */
+.qFrac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  margin: 0 0.2em;
+}
+
+.qNum,
+.qDen {
+  line-height: 1.1;
+}
+
+.qLine {
+  width: 100%;
+  min-width: 1.6em;
+  height: 2px;
+  background: currentColor;
+  margin: 0.08em 0;
+}
+/* ===== 解答分数BOX ===== */
+#answerBox {
+  width: 90%;
+  max-width: 600px;
+  min-height: 160px;
+
+  background: white;
+  border: 2px solid #90caf9;
+  border-radius: 14px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 12px;
+}
+
+#numeratorDisplay,
+#denominatorDisplay {
+  min-height: 48px;
+  width: 100%;
+  text-align: center;
+  font-size: clamp(28px, 8vw, 56px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 分数線 */
+.fractionLine {
+  width: 80%;
+  height: 3px;
+  background: #64b5f6;
+  border-radius: 2px;
+  margin: 8px 0;
+}
+
+/* 入力モード強調 */
+.active {
+  background: #e3f2fd;
+  border-radius: 8px;
+}
+
+/* ===== 下半分 ===== */
+.bottom {
+  flex: 1;
+
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-auto-flow: row;
+
+  gap: 10px;
+  padding: 12px;
+}
+
+/* ===== ボタン基本 ===== */
+button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 14px;
+
+  font-size: clamp(24px, 6vw, 48px);
+  font-weight: 500;
+
+  background: #e3f2fd;
+
+  transition: transform 0.05s, background 0.05s;
+}
+
+/* x,y */
+button[data-key="x"],
+button[data-key="y"] {
+  font-family: "Times New Roman", serif;
+  font-style: italic;
+}
+
+/* 押下 */
+button:active {
+  transform: scale(0.95);
+  background: #bbdefb;
+}
+
+/* ===== 色分け ===== */
+
+/* 数字 */
+button[data-key="0"],
+button[data-key="1"],
+button[data-key="2"],
+button[data-key="3"],
+button[data-key="4"],
+button[data-key="5"],
+button[data-key="6"],
+button[data-key="7"],
+button[data-key="8"],
+button[data-key="9"] {
+  background: #e1f5fe;
+}
+
+/* x y */
+button[data-key="x"],
+button[data-key="y"] {
+  background: #e8f5e9;
+}
+
+/* 指数 */
+button[data-key="○²"],
+button[data-key="○³"],
+button[data-key="○⁴"],
+button[data-key="○⁵"],
+button[data-key="○⁶"] {
+  background: #fff3e0;
+}
+
+/* 消去 */
+button[data-key="消"] {
+  background: #ffebee;
+}
+
+/* MODE */
+#modeButton {
+  grid-column: 2 / 6;
+  grid-row: 4;
+
+  background: #ede7f6;
+  font-size: clamp(18px, 4vw, 32px);
+}
+
+/* OK */
+button[data-key="OK"] {
+  grid-column: 6;
+  grid-row: 3 / 5;
+
+  background: #4caf50;
+  color: white;
+}
+
+/* ===== スマホ最適化 ===== */
+@media (max-width: 480px) {
+  .bottom {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  button {
+    min-height: 64px;
+  }
+
+  #answerBox {
+    min-height: 130px;
+  }
+}
+
+/* ===== トースト ===== */
+#toast {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+
+  padding: 20px 28px;
+  border-radius: 16px;
+
+  font-size: clamp(28px, 8vw, 56px);
+  font-weight: bold;
+
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    "Noto Sans JP",
+    sans-serif;
+
+  text-align: center;
+
+  color: white;
+  background: rgba(0, 0, 0, 0.85);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+
+  z-index: 999;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#toast.success {
+  background: #2e7d32;
+}
+
+#toast.error {
+  background: #c62828;
+}
