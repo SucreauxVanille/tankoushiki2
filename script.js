@@ -4,7 +4,11 @@ const denominatorEl = document.getElementById("denominatorDisplay");
 const modeBtn = document.getElementById("modeButton");
 const toast = document.getElementById("toast");
 const buttonsContainer = document.getElementById("buttons");
+const timerEl = document.getElementById("timer");
 
+let timeLeft = 0;
+let timerInterval = null;
+let isAnswerShown = false;
 let inputMode = "denominator";
 let numeratorInput = "";
 let denominatorInput = "";
@@ -155,10 +159,14 @@ function handleInput(val) {
     return;
   }
 
-  if (val === "OK") {
+if (val === "OK") {
+  if (isAnswerShown) {
+    newQuestion();
+  } else {
     checkAnswer();
-    return;
   }
+  return;
+}
 
   let current = getCurrentInput();
 
@@ -251,11 +259,16 @@ if (rx > 6 || ry > 6) return newQuestion();
   const right = formatMonomial(c, d, x2, y2);
 
   questionEl.innerHTML = renderQuestion(left, op, right);
-
+const hasFraction = (b !== 1 || d !== 1);
+startTimer(hasFraction ? 20 : 10);
+  
   numeratorInput = "";
   denominatorInput = "";
   inputMode = "denominator";
   updateDisplay();
+
+  isAnswerShown = false;
+document.querySelector('[data-key="OK"]').textContent = "OK";
 }
 
 function renderFraction(m) {
@@ -272,6 +285,28 @@ function renderFraction(m) {
 
 function renderQuestion(left, op, right) {
   return `${renderFraction(left)} ${op} ${renderFraction(right)}`;
+}
+
+//タイマー
+function startTimer(seconds) {
+  clearInterval(timerInterval);
+
+  timeLeft = seconds;
+  updateTimer();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      revealAnswer();
+    }
+  }, 1000);
+}
+
+function updateTimer() {
+  timerEl.textContent = `残り ${timeLeft}`;
 }
 
 // ===== トースト =====
@@ -314,11 +349,30 @@ function checkAnswer() {
     user.y === c.y;
 
   if (ok) {
+    clearInterval(timerInterval);
     showToast("正解！よくできました！", "success");
     newQuestion();
   } else {
     showToast("おしい！もう一度！", "error");
   }
+}
+//解答表示
+function revealAnswer() {
+  isAnswerShown = true;
+
+  numeratorInput =
+    correctAnswer.coef +
+    formatVars(correctAnswer.x, correctAnswer.y)
+      .replace(/<[^>]*>/g, "");
+
+  denominatorInput =
+    correctAnswer.den === 1 ? "" : String(correctAnswer.den);
+
+  updateDisplay();
+
+  showToast("時間切れ！答えを確認しよう", "error");
+
+  document.querySelector('[data-key="OK"]').textContent = "次へ";
 }
 
 // ===== 初期化 =====
